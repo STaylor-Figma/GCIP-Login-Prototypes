@@ -493,10 +493,18 @@
 
         /* Warning Icon */
         .warning-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto var(--spacing-500);
-            position: relative;
+            width: 24px;
+            height: 24px;
+            background: var(--status-error);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-0);
+            font-size: 16px;
+            font-weight: bold;
+            flex-shrink: 0;
+            vertical-align: top;
         }
         
         .warning-icon svg {
@@ -507,6 +515,25 @@
         /* Error Message Screen */
         .error-screen {
             text-align: center;
+        }
+        
+        .error-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--status-light-error);
+            border: 1px solid var(--status-error);
+            border-radius: var(--radius-sm);
+            padding: var(--spacing-400);
+            margin-bottom: var(--spacing-500);
+            text-align: left;
+        }
+        
+        .error-text {
+            flex: 1;
+            font-size: var(--font-size-300);
+            color: var(--neutral-500);
+            line-height: 1.5;
         }
         
         .error-title {
@@ -658,24 +685,12 @@
                 </div>
                 
                 <div class="error-screen">
-                    <div class="warning-icon">
-                        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M40 0L77.9423 70H2.05769L40 0Z" fill="#F5A623"/>
-                            <path d="M40 25V45" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
-                            <circle cx="40" cy="55" r="3" fill="#000000"/>
-                        </svg>
+                    <div class="error-container">
+                        <div class="warning-icon">!</div>
+                        <div class="error-text">
+                            We couldn't find an SSO organization for <strong id="errorEmail">user@unknowndomain.com</strong>. This domain may not be configured for single sign-on.
+                        </div>
                     </div>
-                    
-                    <h2 class="error-title">Organization Not Found</h2>
-                    
-                    <p class="error-message">
-                        We couldn't find an SSO organization for<br>
-                        <strong id="errorEmail">user@unknowndomain.com</strong>
-                    </p>
-                    
-                    <p class="error-submessage">
-                        This domain may not be configured for single sign-on.
-                    </p>
                     
                     <button type="button" onclick="goToScreen(1)" class="btn btn-primary" style="margin-bottom: var(--spacing-300);">Try Another Email</button>
                     <button type="button" onclick="contactAdministrator()" class="btn btn-secondary">Contact Your Administrator</button>
