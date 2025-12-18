@@ -830,7 +830,6 @@
 
         // Initialize
         function init() {
-            renderOrganizations();
             updateDebugNav();
         }
 
@@ -899,43 +898,6 @@
             document.getElementById('newAccountEmail').textContent = userEmail;
             goToScreen(2);
         });
-
-        // Render organizations
-        function renderOrganizations() {
-            const orgList = document.getElementById('orgList');
-            orgList.innerHTML = '';
-
-            organizations.forEach(org => {
-                const orgItem = document.createElement('div');
-                orgItem.className = 'org-item';
-                orgItem.onclick = () => selectOrg(org.id);
-
-                orgItem.innerHTML = `
-                    <div>
-                        <div class="org-name">${org.name}</div>
-                        <div class="org-role">${org.role}</div>
-                    </div>
-                    <div class="org-check"></div>
-                `;
-
-                orgList.appendChild(orgItem);
-            });
-        }
-
-        // Select organization
-        function selectOrg(orgId) {
-            selectedOrg = orgId;
-
-            // Update UI
-            document.querySelectorAll('.org-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-
-            event.currentTarget.classList.add('selected');
-
-            // Enable continue button
-            document.getElementById('continueOrgBtn').disabled = false;
-        }
 
         // MFA digit navigation
         function moveToNext(current, nextId) {
