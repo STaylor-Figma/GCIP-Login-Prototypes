@@ -644,27 +644,60 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary" onclick="goToScreen(4)">Link Accounts</button>
-                <button class="btn btn-secondary" style="margin-top: var(--spacing-300);" onclick="goToScreen(1)">Cancel</button>
+                <button class="btn btn-primary" onclick="goToScreen(5)">Link Accounts</button>
+                <button class="btn btn-secondary" style="margin-top: var(--spacing-300);" onclick="goToScreen(4.5)">No, create a new account</button>
+                
+                <div style="text-align: center; margin-top: var(--spacing-400);">
+                    <button type="button" onclick="goToScreen(1)" class="link">Back to login</button>
+                </div>
             </div>
         </div>
 
-        <!-- Screen 4: Multi-Organization Selection -->
+        <!-- Screen 4.5: New Account Confirm -->
+        <div id="screen4.5" class="screen">
+            <div class="login-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect" >
+                    </div>
+                    <div class="card-title">Create New Account</div>
+                    <div class="card-subtitle">We'll create a new account for you</div>
+                </div>
+
+                <div style="background: var(--neutral-100); padding: var(--spacing-400); border-radius: var(--radius-sm); margin-bottom: var(--spacing-500);">
+                    <div style="font-size: var(--font-size-300); color: var(--neutral-500); margin-bottom: 8px;">
+                        <strong>Email:</strong> <span id="newAccountEmail"></span>
+                    </div>
+                    <div style="font-size: var(--font-size-300); color: var(--neutral-400);">
+                        A new account will be created using your SSO identity.
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="goToScreen(5)">Continue</button>
+                
+                <div style="text-align: center; margin-top: var(--spacing-400);">
+                    <button type="button" onclick="goToScreen(1)" class="link">Back to login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 4: Provider Selection (when one org has multiple SSO providers) -->
         <div id="screen4" class="screen">
             <div class="login-card">
                 <div class="card-header">
                     <div class="card-logo">
                         <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect" >
                     </div>
-                    <div class="card-title">Select Organization</div>
-                    <div class="card-subtitle">You have access to multiple organizations</div>
+                    <div class="card-title">Choose Sign-In Method</div>
+                    <div class="card-subtitle">Select your preferred authentication method</div>
                 </div>
 
-                <div class="org-list" id="orgList">
-                    <!-- Organizations will be added here -->
+                <button class="btn btn-primary" onclick="goToScreen(2)" style="margin-bottom: var(--spacing-300);">Google SSO</button>
+                <button class="btn btn-secondary" onclick="goToScreen(2)">Microsoft Azure AD</button>
+                
+                <div style="text-align: center; margin-top: var(--spacing-500);">
+                    <button type="button" onclick="goToScreen(1)" class="link">Back to email entry</button>
                 </div>
-
-                <button class="btn btn-primary" onclick="goToScreen(5)" id="continueOrgBtn" disabled>Continue</button>
             </div>
         </div>
 
@@ -776,7 +809,8 @@
         <button onclick="goToScreen(1)" class="active-screen">1. Tenant Discovery</button>
         <button onclick="goToScreen(2)">2. Connecting</button>
         <button onclick="goToScreen(3)">3. Account Linking</button>
-        <button onclick="goToScreen(4)">4. Org Selection</button>
+        <button onclick="goToScreen(4)">4. Provider Selection</button>
+        <button onclick="goToScreen('4.5')">4.5. New Account</button>
         <button onclick="goToScreen(5)">5. MFA Verification</button>
         <button onclick="goToScreen(6)">6. Success</button>
         <button onclick="goToScreen(7)">7. Email/Password</button>
@@ -862,6 +896,7 @@
             userEmail = email;
             document.getElementById('ssoEmail').textContent = userEmail;
             document.getElementById('existingEmail').textContent = userEmail.replace('@', '+existing@');
+            document.getElementById('newAccountEmail').textContent = userEmail;
             goToScreen(2);
         });
 
