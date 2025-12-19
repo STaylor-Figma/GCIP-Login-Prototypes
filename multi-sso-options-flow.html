@@ -872,6 +872,7 @@
         let currentScreen = 1;
         let selectedOrg = null;
         let userEmail = '';
+        let selectedProvider = '';
 
         // Sample organizations
         const organizations = [
@@ -879,6 +880,22 @@
             { id: 2, name: 'BuildRight LLC', role: 'Project Manager' },
             { id: 3, name: 'Metro Builders Inc', role: 'Estimator' }
         ];
+
+        // Connect to SSO provider
+        function connectToProvider(provider) {
+            selectedProvider = provider;
+            const message = document.getElementById('connectingMessage');
+            
+            if (provider === 'Google') {
+                message.textContent = 'Connecting to Google...';
+            } else if (provider === 'OpenID Connect') {
+                message.textContent = 'Connecting via OpenID Connect...';
+            } else if (provider === 'SAML 2.0') {
+                message.textContent = 'Redirecting to your organization\'s SAML sign-in...';
+            }
+            
+            goToScreen(2);
+        }
 
         // Initialize
         function init() {
