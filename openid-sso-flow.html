@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConstructConnect - OpenID Connect SSO Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Blueprint Design System Tokens */
+        :root {
+            /* Primary Colors */
+            --primary-100: #f2fafe;
+            --primary-200: #ccecf9;
+            --primary-400: #00a1e0;
+            --primary-500: #0c79a8;
+            --primary-600: #185a7d;
+            --primary-700: #01304a;
+            
+            /* Neutrals */
+            --neutral-0: #ffffff;
+            --neutral-100: #f4f4f4;
+            --neutral-200: #e7e6e5;
+            --neutral-300: #dad8d7;
+            --neutral-400: #88888e;
+            --neutral-500: #4a4f55;
+            --neutral-1000: #000000;
+            
+            /* Status */
+            --status-success: #459d13;
+            --status-warning: #ed7800;
+            --status-error: #b70900;
+            --status-light-error: #fef2f1;
+            
+            /* Neutral Extended */
+            --neutral-600: #353a40;
+            
+            /* Typography */
+            --font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-300: 14px;
+            --font-size-400: 16px;
+            --font-size-600: 20px;
+            
+            /* Spacing */
+            --spacing-300: 12px;
+            --spacing-400: 16px;
+            --spacing-500: 20px;
+            --spacing-600: 24px;
+            --spacing-800: 32px;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--neutral-100);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background: var(--primary-700);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            color: var(--neutral-0);
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--neutral-0);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-700);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-600);
+        }
+
+        /* Login Card */
+        .login-card {
+            background: var(--neutral-0);
+            border: 1px solid var(--primary-400);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-800);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            margin-bottom: var(--spacing-600);
+        }
+
+        .card-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-400);
+        }
+
+        .card-logo img {
+            width: auto;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .card-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-400);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-0);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .card-logo-text {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--neutral-500);
+        }
+
+        .card-logo-text .highlight {
+            color: var(--primary-700);
+        }
+
+        .card-title {
+            color: var(--primary-500);
+            font-size: var(--font-size-400);
+            font-weight: 600;
+            margin-top: var(--spacing-400);
+        }
+
+        .card-subtitle {
+            color: var(--neutral-500);
+            font-size: var(--font-size-300);
+            margin-top: var(--spacing-300);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: var(--spacing-500);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-size-300);
+            font-weight: 600;
+            color: var(--neutral-500);
+            margin-bottom: 6px;
+        }
+
+        .form-label .required {
+            color: var(--status-error);
+            font-size: 0.85em;
+            vertical-align: super;
+            margin-left: 2px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-300);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-300);
+            font-family: var(--font-family);
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-400);
+            box-shadow: 0 0 0 2px rgba(0, 161, 224, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--status-error);
+            border-width: 2px;
+        }
+
+        .form-input.error:focus {
+            box-shadow: 0 0 0 2px rgba(183, 9, 0, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--neutral-400);
+            font-style: italic;
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: var(--font-size-300);
+            color: var(--neutral-500);
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-300);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-family);
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
+            background: var(--primary-400);
+            color: var(--neutral-0);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-500);
+        }
+
+        .btn-secondary {
+            background: var(--neutral-200);
+            color: var(--neutral-500);
+        }
+
+        .btn-secondary:hover {
+            background: var(--neutral-300);
+        }
+
+        /* Ghost Button */
+        .btn-ghost {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px;
+            font-size: var(--font-size-300);
+            font-weight: 600;
+            border: 2px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--neutral-500);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-family);
+            margin-bottom: var(--spacing-300);
+            box-sizing: border-box;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--neutral-400);
+            background: var(--neutral-100);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: var(--spacing-600) 0;
+            color: var(--neutral-400);
+            font-size: var(--font-size-300);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--neutral-300);
+        }
+
+        .divider::before {
+            margin-right: var(--spacing-300);
+        }
+
+        .divider::after {
+            margin-left: var(--spacing-300);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Links */
+        .link {
+            width: 100%;
+            height: 42px;
+            color: var(--primary-500);
+            background: transparent;
+            border: none;
+            padding: 0 14px;
+            text-decoration: none;
+            font-size: var(--font-size-300);
+            font-weight: 700;
+            font-family: var(--font-family);
+            cursor: pointer;
+        }
+
+        .link:hover {
+            color: var(--primary-500);
+            background-color: var(--primary-100);
+            text-decoration: none;
+        }
+
+        .link:focus {
+            outline: 2px solid var(--primary-400);
+            outline-offset: 2px;
+        }
+
+        .link:active {
+            color: var(--primary-500);
+        }
+
+        /* Error Message */
+        .error-message {
+            display: none;
+            color: var(--status-error);
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+            font-family: var(--font-family);
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            background-color: var(--neutral-500);
+            color: var(--neutral-0);
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 14px;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--neutral-500) transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-text.error {
+            background-color: var(--status-light-error);
+            color: var(--status-error);
+            border: 1px solid var(--status-error);
+        }
+
+        .tooltip-text.error::after {
+            border-color: var(--status-error) transparent transparent transparent;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--spacing-400);
+            margin-bottom: var(--spacing-500);
+        }
+
+        /* Loading Spinner */
+        .loading-container {
+            text-align: center;
+            padding: var(--spacing-800);
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--neutral-200);
+            border-top-color: var(--primary-400);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--spacing-500);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--neutral-500);
+            font-size: var(--font-size-400);
+            margin-bottom: var(--spacing-300);
+        }
+
+        .loading-subtext {
+            color: var(--neutral-400);
+            font-size: var(--font-size-300);
+        }
+
+        /* Organization Selection */
+        .org-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-300);
+            margin-bottom: var(--spacing-500);
+        }
+
+        .org-item {
+            padding: var(--spacing-400);
+            border: 2px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .org-item:hover {
+            border-color: var(--primary-400);
+            background: rgba(0, 161, 224, 0.05);
+        }
+
+        .org-item.selected {
+            border-color: var(--primary-400);
+            background: rgba(0, 161, 224, 0.1);
+        }
+
+        .org-name {
+            font-weight: 600;
+            color: var(--neutral-500);
+            font-size: var(--font-size-300);
+        }
+
+        .org-role {
+            font-size: 12px;
+            color: var(--neutral-400);
+            margin-top: 4px;
+        }
+
+        .org-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neutral-300);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .org-item.selected .org-check {
+            background: var(--primary-400);
+            border-color: var(--primary-400);
+        }
+
+        .org-item.selected .org-check::after {
+            content: '✓';
+            color: var(--neutral-0);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* MFA Code Input */
+        .mfa-code-container {
+            display: flex;
+            gap: var(--spacing-300);
+            justify-content: center;
+            margin: var(--spacing-600) 0;
+        }
+
+        .mfa-digit {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border: 2px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            font-family: monospace;
+        }
+
+        .mfa-digit:focus {
+            outline: none;
+            border-color: var(--primary-400);
+            box-shadow: 0 0 0 2px rgba(0, 161, 224, 0.1);
+        }
+
+        .mfa-info {
+            text-align: center;
+            color: var(--neutral-400);
+            font-size: var(--font-size-300);
+            margin-bottom: var(--spacing-500);
+        }
+
+        /* Success Message */
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--status-success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-500);
+            color: var(--neutral-0);
+            font-size: 48px;
+        }
+
+        .success-text {
+            text-align: center;
+            color: var(--neutral-500);
+            font-size: var(--font-size-600);
+            font-weight: 600;
+            margin-bottom: var(--spacing-300);
+        }
+
+        /* Screen visibility */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Debug Navigation */
+        .debug-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--neutral-0);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-300);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            font-size: 12px;
+        }
+
+        .debug-nav h4 {
+            margin-bottom: 8px;
+            color: var(--neutral-500);
+        }
+
+        .debug-nav button {
+            display: block;
+            width: 100%;
+            margin-bottom: 4px;
+            padding: 6px 12px;
+            border: 1px solid var(--neutral-300);
+            background: var(--neutral-100);
+            border-radius: 3px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 11px;
+        }
+
+        .debug-nav button:hover {
+            background: var(--neutral-200);
+        }
+
+        .debug-nav button.active-screen {
+            background: var(--primary-400);
+            color: var(--neutral-0);
+            border-color: var(--primary-400);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        <div class="logo">
+            <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/7a362410-8031-49e4-9834-770fbaa0ce43" alt="ConstructConnect" style="height: 24px;">
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Screen 1: Tenant Discovery -->
+        <div id="screen1" class="screen active">
+            <div class="login-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect" >
+                    </div>
+                </div>
+
+                <button type="button" class="btn-ghost" onclick="connectToProvider('OpenID Connect')">Sign in with OpenID Connect</button>
+
+                <div class="divider">OR</div>
+
+                <form id="tenantForm" novalidate>
+                    <div class="form-group">
+                        <label class="form-label">Registered Company Email<span class="required">*</span></label>
+                        <input 
+                            type="email" 
+                            class="form-input" 
+                            placeholder="Enter your company email"
+                            id="emailInput"
+                            required
+                        >
+                        <div class="tooltip error" id="tenantEmailTooltip" style="display: none;">
+                            <span class="tooltip-text">Please fill out this field.</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="ssoLoginBtn" disabled>Log In with SSO</button>
+                </form>
+                
+                <div style="text-align: center; margin-top: var(--spacing-400);">
+                    <button type="button" onclick="goToScreen(7)" class="link">Use Email and Password instead</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 2: Connecting/Loading -->
+        <div id="screen2" class="screen">
+            <div class="login-card">
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <div class="loading-text" id="connectingMessage">Connecting to your organization...</div>
+                    <div class="loading-subtext">Please wait while we verify your credentials</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 3: Account Linking -->
+        <div id="screen3" class="screen">
+            <div class="login-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect" >
+                    </div>
+                    <div class="card-title">Link Your Account</div>
+                    <div class="card-subtitle">We found an existing account. Please confirm to link.</div>
+                </div>
+
+                <div style="background: var(--neutral-100); padding: var(--spacing-400); border-radius: var(--radius-sm); margin-bottom: var(--spacing-500);">
+                    <div style="font-size: var(--font-size-300); color: var(--neutral-500); margin-bottom: 8px;">
+                        <strong>SSO Account:</strong> <span id="ssoEmail"></span>
+                    </div>
+                    <div style="font-size: var(--font-size-300); color: var(--neutral-500);">
+                        <strong>Existing Account:</strong> <span id="existingEmail"></span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="goToScreen(5)">Link Accounts</button>
+                <button class="btn btn-secondary" style="margin-top: var(--spacing-300);" onclick="goToScreen(4.5)">No, create a new account</button>
+                
+                <div style="text-align: center; margin-top: var(--spacing-400);">
+                    <button type="button" onclick="goToScreen(1)" class="link">Back to login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 4.5: New Account Confirm -->
+        <div id="screen4.5" class="screen">
+            <div class="login-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect" >
+                    </div>
+                    <div class="card-title">Create New Account</div>
+                    <div class="card-subtitle">We'll create a new account for you</div>
+                </div>
+
+                <div style="background: var(--neutral-100); padding: var(--spacing-400); border-radius: var(--radius-sm); margin-bottom: var(--spacing-500);">
+                    <div style="font-size: var(--font-size-300); color: var(--neutral-500); margin-bottom: 8px;">
+                        <strong>Email:</strong> <span id="newAccountEmail"></span>
+                    </div>
+                    <div style="font-size: var(--font-size-300); color: var(--neutral-400);">
+                        A new account will be created using your SSO identity.
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="goToScreen(5)">Continue</button>
+                
+                <div style="text-align: center; margin-top: var(--spacing-400);">
+                    <button type="button" onclick="goToScreen(1)" class="link">Back to login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 4: Provider Selection (when one org has multiple SSO providers) -->
+        <div id="screen4" class="screen">
+            <div class="login-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect" >
+                    </div>
+                    <div class="card-title">Choose Sign-In Method</div>
+                    <div class="card-subtitle">Select your preferred authentication method</div>
+                </div>
+
+                <button class="btn btn-primary" onclick="goToScreen(2)" style="margin-bottom: var(--spacing-300);">Google SSO</button>
+                <button class="btn btn-secondary" onclick="goToScreen(2)">Microsoft Azure AD</button>
+                
+                <div style="text-align: center; margin-top: var(--spacing-500);">
+                    <button type="button" onclick="goToScreen(1)" class="link">Back to email entry</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 5: MFA Verification -->
+        <div id="screen5" class="screen">
+            <div class="login-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect" >
+                    </div>
+                    <div class="card-title">Two-Factor Authentication</div>
+                    <div class="card-subtitle">Enter the verification code from your authenticator app</div>
+                </div>
+
+                <div class="mfa-info">
+                    A 6-digit code was sent to your device
+                </div>
+
+                <div class="mfa-code-container">
+                    <input type="text" class="mfa-digit" maxlength="1" id="digit1" onkeyup="moveToNext(this, 'digit2')">
+                    <input type="text" class="mfa-digit" maxlength="1" id="digit2" onkeyup="moveToNext(this, 'digit3')">
+                    <input type="text" class="mfa-digit" maxlength="1" id="digit3" onkeyup="moveToNext(this, 'digit4')">
+                    <input type="text" class="mfa-digit" maxlength="1" id="digit4" onkeyup="moveToNext(this, 'digit5')">
+                    <input type="text" class="mfa-digit" maxlength="1" id="digit5" onkeyup="moveToNext(this, 'digit6')">
+                    <input type="text" class="mfa-digit" maxlength="1" id="digit6" onkeyup="checkMFACode()">
+                </div>
+
+                <button class="btn btn-primary" onclick="goToScreen(6)" id="verifyBtn" disabled>Verify Code</button>
+
+                <div style="text-align: center; margin-top: var(--spacing-500);">
+                    <a href="#" class="link" onclick="resetMFA()">Resend Code</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 6: Success/Logged In -->
+        <div id="screen6" class="screen">
+            <div class="login-card">
+                <div style="text-align: center; padding: var(--spacing-600);">
+                    <div class="success-icon">✓</div>
+                    <div class="success-text">Login Successful!</div>
+                    <div class="card-subtitle">Redirecting to your dashboard...</div>
+
+                    <div style="margin-top: var(--spacing-800);">
+                        <div class="spinner" style="width: 40px; height: 40px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 7: Email and Password Login -->
+        <div id="screen7" class="screen">
+            <div class="login-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect" >
+                    </div>
+                </div>
+
+                <form id="emailPasswordForm" onsubmit="handleEmailPasswordLogin(event)" novalidate>
+                    <div class="form-group">
+                        <label class="form-label">Email<span class="required">*</span></label>
+                        <input 
+                            type="email" 
+                            class="form-input" 
+                            placeholder="Enter your email"
+                            id="emailPasswordEmail"
+                            required
+                        >
+                        <div class="tooltip error" id="emailPasswordEmailTooltip" style="display: none;">
+                            <span class="tooltip-text">Please fill out this field.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password<span class="required">*</span></label>
+                        <input 
+                            type="password" 
+                            class="form-input" 
+                            placeholder="Enter your password here"
+                            id="passwordInput"
+                            required
+                        >
+                        <div class="tooltip error" id="passwordTooltip" style="display: none;">
+                            <span class="tooltip-text">Please fill out this field.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="rememberMe">
+                            <label for="rememberMe">Remember Me</label>
+                        </div>
+                        <a href="#" class="link">Forgot Password</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="emailPasswordLoginBtn" disabled>Log In</button>
+                    <button type="button" class="btn btn-secondary" style="margin-top: var(--spacing-300);">Create a New Account</button>
+                </form>
+                
+                <button type="button" onclick="goToScreen(1)" class="link" style="margin-top: var(--spacing-300);">Login Using SSO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Navigation (for prototype testing) -->
+    <div class="debug-nav">
+        <h4>🧭 Screen Navigation</h4>
+        <button onclick="goToScreen(1)" class="active-screen">1. Multi-SSO Login</button>
+        <button onclick="goToScreen(2)">2. Connecting</button>
+        <button onclick="goToScreen(3)">3. Account Linking</button>
+        <button onclick="goToScreen(4)">4. Provider Selection</button>
+        <button onclick="goToScreen('4.5')">4.5. New Account</button>
+        <button onclick="goToScreen(5)">5. MFA Verification</button>
+        <button onclick="goToScreen(6)">6. Success</button>
+        <button onclick="goToScreen(7)">7. Email/Password</button>
+    </div>
+
+    <script>
+        let currentScreen = 1;
+        let selectedOrg = null;
+        let userEmail = '';
+        let selectedProvider = '';
+
+        // Sample organizations
+        const organizations = [
+            { id: 1, name: 'Acme Construction Corp', role: 'Admin' },
+            { id: 2, name: 'BuildRight LLC', role: 'Project Manager' },
+            { id: 3, name: 'Metro Builders Inc', role: 'Estimator' }
+        ];
+
+        // Connect to SSO provider
+        function connectToProvider(provider) {
+            selectedProvider = provider;
+            const message = document.getElementById('connectingMessage');
+            
+            if (provider === 'Google') {
+                message.textContent = 'Connecting to Google...';
+            } else if (provider === 'OpenID Connect') {
+                message.textContent = 'Connecting via OpenID Connect...';
+            } else if (provider === 'SAML 2.0') {
+                message.textContent = 'Redirecting to your organization\'s SAML sign-in...';
+            }
+            
+            goToScreen(2);
+        }
+
+        // Initialize
+        function init() {
+            updateDebugNav();
+        }
+
+        // Navigate to screen
+        function goToScreen(screenNum) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Show target screen
+            document.getElementById('screen' + screenNum).classList.add('active');
+            currentScreen = screenNum;
+            updateDebugNav();
+
+            // Auto-advance on connecting screen
+            if (screenNum === 2) {
+                setTimeout(() => goToScreen(3), 2000);
+            }
+
+            // Auto-redirect on success screen
+            if (screenNum === 6) {
+                setTimeout(() => {
+                    alert('Prototype complete! In production, user would be redirected to dashboard.');
+                    goToScreen(1);
+                }, 3000);
+            }
+        }
+
+        // Update debug navigation
+        function updateDebugNav() {
+            document.querySelectorAll('.debug-nav button').forEach((btn, index) => {
+                btn.classList.toggle('active-screen', index + 1 === currentScreen);
+            });
+        }
+
+        // Handle tenant discovery form
+        document.getElementById('tenantForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('emailInput');
+            const email = emailInput.value;
+            const tooltip = document.getElementById('tenantEmailTooltip');
+            
+            // Clear previous error state
+            emailInput.classList.remove('error');
+            tooltip.style.display = 'none';
+            
+            // Validate email
+            if (!email.trim()) {
+                emailInput.classList.add('error');
+                tooltip.querySelector('.tooltip-text').textContent = 'Please fill out this field.';
+                tooltip.style.display = 'block';
+                return;
+            }
+            
+            if (!emailInput.checkValidity()) {
+                emailInput.classList.add('error');
+                tooltip.querySelector('.tooltip-text').textContent = 'Please enter a valid email address.';
+                tooltip.style.display = 'block';
+                return;
+            }
+            
+            userEmail = email;
+            document.getElementById('ssoEmail').textContent = userEmail;
+            document.getElementById('existingEmail').textContent = userEmail.replace('@', '+existing@');
+            document.getElementById('newAccountEmail').textContent = userEmail;
+            document.getElementById('connectingMessage').textContent = 'Connecting to your organization...';
+            goToScreen(2);
+        });
+
+        // MFA digit navigation
+        function moveToNext(current, nextId) {
+            if (current.value.length === 1) {
+                const next = document.getElementById(nextId);
+                if (next) next.focus();
+            }
+            checkMFACode();
+        }
+
+        // Check if MFA code is complete
+        function checkMFACode() {
+            const digits = ['digit1', 'digit2', 'digit3', 'digit4', 'digit5', 'digit6'];
+            const allFilled = digits.every(id => document.getElementById(id).value.length === 1);
+            document.getElementById('verifyBtn').disabled = !allFilled;
+        }
+
+        // Reset MFA
+        function resetMFA() {
+            ['digit1', 'digit2', 'digit3', 'digit4', 'digit5', 'digit6'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('digit1').focus();
+            document.getElementById('verifyBtn').disabled = true;
+        }
+
+        // Handle email/password login
+        function handleEmailPasswordLogin(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('emailPasswordEmail');
+            const passwordInput = document.getElementById('passwordInput');
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            const emailTooltip = document.getElementById('emailPasswordEmailTooltip');
+            const passwordTooltip = document.getElementById('passwordTooltip');
+            
+            // Clear previous error states
+            emailInput.classList.remove('error');
+            passwordInput.classList.remove('error');
+            emailTooltip.style.display = 'none';
+            passwordTooltip.style.display = 'none';
+            
+            let hasError = false;
+            
+            // Validate email
+            if (!email.trim()) {
+                emailInput.classList.add('error');
+                emailTooltip.querySelector('.tooltip-text').textContent = 'Please fill out this field.';
+                emailTooltip.style.display = 'block';
+                hasError = true;
+            } else if (!emailInput.checkValidity()) {
+                emailInput.classList.add('error');
+                emailTooltip.querySelector('.tooltip-text').textContent = 'Please enter a valid email address.';
+                emailTooltip.style.display = 'block';
+                hasError = true;
+            }
+            
+            // Validate password
+            if (!password.trim()) {
+                passwordInput.classList.add('error');
+                passwordTooltip.querySelector('.tooltip-text').textContent = 'Please fill out this field.';
+                passwordTooltip.style.display = 'block';
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            // In a real implementation, this would authenticate the user
+            // For prototype, just show success
+            alert('Email/Password login would be processed here.\n\nFor this prototype, redirecting to success screen.');
+            goToScreen(6);
+        }
+
+        // Initialize on page load
+        init();
+        
+        // Clear error state on input and validate for button state
+        document.getElementById('emailInput').addEventListener('input', function() {
+            this.classList.remove('error');
+            document.getElementById('tenantEmailTooltip').style.display = 'none';
+            
+            // Enable/disable button based on valid email
+            const ssoBtn = document.getElementById('ssoLoginBtn');
+            if (this.value.trim() && this.checkValidity()) {
+                ssoBtn.disabled = false;
+            } else {
+                ssoBtn.disabled = true;
+            }
+        });
+        
+        document.getElementById('emailPasswordEmail').addEventListener('input', function() {
+            this.classList.remove('error');
+            document.getElementById('emailPasswordEmailTooltip').style.display = 'none';
+            validateEmailPasswordForm();
+        });
+        
+        document.getElementById('passwordInput').addEventListener('input', function() {
+            this.classList.remove('error');
+            document.getElementById('passwordTooltip').style.display = 'none';
+            validateEmailPasswordForm();
+        });
+        
+        // Validate email/password form and enable/disable button
+        function validateEmailPasswordForm() {
+            const emailInput = document.getElementById('emailPasswordEmail');
+            const passwordInput = document.getElementById('passwordInput');
+            const loginBtn = document.getElementById('emailPasswordLoginBtn');
+            
+            if (emailInput.value.trim() && emailInput.checkValidity() && passwordInput.value.trim()) {
+                loginBtn.disabled = false;
+            } else {
+                loginBtn.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
