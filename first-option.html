@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCIP Login Flow Prototypes - ConstructConnect</title>
+    <title>First Option - GCIP Login Flow Prototypes</title>
     <style>
         * {
             margin: 0;
@@ -89,6 +89,21 @@
             color: var(--neutral-400);
         }
 
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-500);
+            text-decoration: none;
+            font-size: var(--font-size-300);
+            margin-bottom: var(--spacing-500);
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-600);
+        }
+
         .flow-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -154,22 +169,58 @@
 
     <!-- Main Content -->
     <div class="container">
+        <a href="index.html" class="back-link">
+            ← Back to Options
+        </a>
+
         <div class="header">
-            <h1>GCIP Login Flow Prototypes</h1>
-            <p>Select a workflow option to explore interactive prototypes</p>
+            <h1>First Option - Login Flow Variants</h1>
+            <p>Interactive prototypes for Google Cloud Identity Platform (GCIP) SSO login flows</p>
         </div>
 
         <div class="flow-grid">
-            <a href="first-option.html" class="flow-card">
-                <h2>First Option</h2>
-                <p>Complete collection of SSO login flow variants including Google, OpenID Connect, SAML, and error states.</p>
-                <span class="flow-badge">Multiple Flows</span>
+            <a href="google-sso-flow.html" class="flow-card">
+                <h2>Google SSO Login</h2>
+                <p>Single sign-on flow with Google as the only provider option above the email/password form.</p>
+                <span class="flow-badge">7 Screens</span>
             </a>
 
-            <a href="second-option.html" class="flow-card">
-                <h2>Second Option</h2>
-                <p>TenantMap routing service with intelligent provider selection, automatic SSO routing, and password fallback.</p>
-                <span class="flow-badge">6 Screens</span>
+            <a href="openid-sso-flow.html" class="flow-card">
+                <h2>OpenID Connect SSO Login</h2>
+                <p>Single sign-on flow with OpenID Connect as the only provider option above the email/password form.</p>
+                <span class="flow-badge">7 Screens</span>
+            </a>
+
+            <a href="saml-sso-flow.html" class="flow-card">
+                <h2>SAML SSO Login</h2>
+                <p>Single sign-on flow with SAML 2.0 as the only provider option above the email/password form.</p>
+                <span class="flow-badge">7 Screens</span>
+            </a>
+
+            <!-- Hidden for now
+            <a href="multi-sso-options-flow.html" class="flow-card">
+                <h2>Multi-SSO Options</h2>
+                <p>Login flow with multiple SSO provider options (Google, OpenID Connect, SAML 2.0) presented as buttons above the email/password form.</p>
+                <span class="flow-badge">7 Screens</span>
+            </a>
+            -->
+
+            <a href="sso-login-flow.html" class="flow-card">
+                <h2>SSO Login Flow</h2>
+                <p>Complete happy path for SSO authentication including tenant discovery, account linking, multi-organization selection, and MFA verification.</p>
+                <span class="flow-badge">7 Screens</span>
+            </a>
+
+            <a href="org-not-found-flow.html" class="flow-card">
+                <h2>Organization Not Found</h2>
+                <p>Error flow when a user enters an email domain that is not configured for single sign-on.</p>
+                <span class="flow-badge">2 Screens</span>
+            </a>
+
+            <a href="access-denied-flow.html" class="flow-card">
+                <h2>Access Denied</h2>
+                <p>Error flow when a user selects an organization but does not have sufficient permissions to access it.</p>
+                <span class="flow-badge">5 Screens</span>
             </a>
         </div>
 

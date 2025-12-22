@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConstructConnect - TenantMap SSO Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Blueprint Design System Tokens */
+        :root {
+            /* Primary Colors */
+            --primary-100: #f2fafe;
+            --primary-200: #ccecf9;
+            --primary-400: #00a1e0;
+            --primary-500: #0c79a8;
+            --primary-600: #185a7d;
+            --primary-700: #01304a;
+            
+            /* Neutrals */
+            --neutral-0: #ffffff;
+            --neutral-100: #f4f4f4;
+            --neutral-200: #e7e6e5;
+            --neutral-300: #dad8d7;
+            --neutral-400: #88888e;
+            --neutral-500: #4a4f55;
+            --neutral-600: #353a40;
+            --neutral-1000: #000000;
+            
+            /* Status */
+            --status-success: #459d13;
+            --status-warning: #ed7800;
+            --status-error: #b70900;
+            --status-light-error: #fef2f1;
+            
+            /* Typography */
+            --font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-300: 14px;
+            --font-size-400: 16px;
+            --font-size-600: 20px;
+            
+            /* Spacing */
+            --spacing-300: 12px;
+            --spacing-400: 16px;
+            --spacing-500: 20px;
+            --spacing-600: 24px;
+            --spacing-800: 32px;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--neutral-100);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-banner {
+            background: var(--primary-700);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            color: var(--neutral-0);
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--neutral-0);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-700);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-600);
+        }
+
+        .login-card {
+            background: var(--neutral-0);
+            border: 1px solid var(--primary-400);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-800);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            margin-bottom: var(--spacing-600);
+        }
+
+        .card-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-400);
+        }
+
+        .card-logo img {
+            width: auto;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .card-title {
+            color: var(--primary-500);
+            font-size: var(--font-size-400);
+            font-weight: 600;
+            margin-top: var(--spacing-400);
+        }
+
+        .card-subtitle {
+            color: var(--neutral-500);
+            font-size: var(--font-size-300);
+            margin-top: var(--spacing-300);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-500);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-size-300);
+            font-weight: 600;
+            color: var(--neutral-500);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-300);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-300);
+            font-family: var(--font-family);
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-400);
+            box-shadow: 0 0 0 2px rgba(0, 161, 224, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--status-error);
+            border-width: 2px;
+        }
+
+        .form-input::placeholder {
+            color: var(--neutral-400);
+            font-style: italic;
+        }
+
+        .form-input:read-only {
+            background: var(--neutral-100);
+            color: var(--neutral-500);
+        }
+
+        .btn {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-300);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-family);
+            box-sizing: border-box;
+            margin-bottom: var(--spacing-300);
+        }
+
+        .btn-primary {
+            background: var(--primary-400);
+            color: var(--neutral-0);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-500);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-ghost {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px;
+            font-size: var(--font-size-300);
+            font-weight: 600;
+            border: 2px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--neutral-500);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-family);
+            margin-bottom: var(--spacing-300);
+            box-sizing: border-box;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--neutral-400);
+            background: var(--neutral-100);
+        }
+
+        .provider-btn {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px;
+            border: 2px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            background: var(--neutral-0);
+            color: var(--neutral-500);
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-size: var(--font-size-300);
+            font-weight: 600;
+            margin-bottom: var(--spacing-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .provider-btn:hover {
+            border-color: var(--primary-400);
+            background: var(--primary-100);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: var(--spacing-600) 0;
+            color: var(--neutral-400);
+            font-size: var(--font-size-300);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--neutral-300);
+        }
+
+        .divider::before {
+            margin-right: var(--spacing-300);
+        }
+
+        .divider::after {
+            margin-left: var(--spacing-300);
+        }
+
+        .link {
+            width: 100%;
+            height: 42px;
+            color: var(--primary-500);
+            background: transparent;
+            border: none;
+            padding: 0 14px;
+            text-decoration: none;
+            font-size: var(--font-size-300);
+            font-weight: 700;
+            font-family: var(--font-family);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .link:hover {
+            color: var(--primary-500);
+            background-color: var(--primary-100);
+            text-decoration: none;
+        }
+
+        .error-message {
+            display: none;
+            color: var(--status-error);
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+            font-family: var(--font-family);
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .error-box {
+            background: var(--status-light-error);
+            border: 1px solid var(--status-error);
+            border-radius: var(--radius-sm);
+            padding: var(--spacing-400);
+            margin-bottom: var(--spacing-500);
+        }
+
+        .error-box-title {
+            color: var(--status-error);
+            font-weight: 600;
+            font-size: var(--font-size-300);
+            margin-bottom: 4px;
+        }
+
+        .error-box-message {
+            color: var(--neutral-500);
+            font-size: var(--font-size-300);
+        }
+
+        .loading-spinner {
+            border: 3px solid var(--neutral-200);
+            border-top: 3px solid var(--primary-400);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--spacing-400) auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            text-align: center;
+            color: var(--neutral-500);
+            font-size: var(--font-size-300);
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--status-success);
+            color: var(--neutral-0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto var(--spacing-400) auto;
+        }
+
+        .success-message {
+            text-align: center;
+            color: var(--neutral-500);
+            font-size: var(--font-size-400);
+            font-weight: 600;
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--neutral-400);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 14px;
+        }
+
+        .password-toggle-btn:hover {
+            color: var(--neutral-500);
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        <div class="logo">
+            <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/7a362410-8031-49e4-9834-770fbaa0ce43" alt="ConstructConnect" style="height: 24px;">
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="login-card">
+            <!-- Screen 1: Tenant Discovery (Email Entry) -->
+            <div id="screen-1" class="screen active">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect">
+                    </div>
+                    <h1 class="card-title">Sign in to ConstructConnect</h1>
+                    <p class="card-subtitle">Enter your email to get started</p>
+                </div>
+
+                <form id="email-form" novalidate>
+                    <div class="form-group">
+                        <label for="email-input" class="form-label">Email</label>
+                        <input 
+                            type="email" 
+                            id="email-input" 
+                            class="form-input" 
+                            placeholder="name@company.com"
+                        >
+                        <div class="error-message" id="email-error"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="continue-btn" disabled>Continue</button>
+                </form>
+            </div>
+
+            <!-- Screen 2: Provider Selection (Multiple IdPs) -->
+            <div id="screen-2" class="screen">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect">
+                    </div>
+                    <h1 class="card-title" id="org-name-title">Multi-IdP Corp</h1>
+                    <p class="card-subtitle" id="user-email-display">user@multi-idp.com</p>
+                </div>
+
+                <div id="provider-buttons">
+                    <button class="provider-btn" data-provider="google">
+                        <span>🔵</span> Sign in with Google
+                    </button>
+                    <button class="provider-btn" data-provider="microsoft">
+                        <span>🟦</span> Sign in with Microsoft
+                    </button>
+                </div>
+
+                <div class="divider">OR</div>
+
+                <button class="provider-btn" data-provider="password">
+                    Sign in with Password
+                </button>
+
+                <button class="link" id="change-email-btn">Use different email</button>
+            </div>
+
+            <!-- Screen 3: Password Entry (Standard Authentication) -->
+            <div id="screen-3" class="screen">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect">
+                    </div>
+                    <h1 class="card-title">Sign in</h1>
+                    <p class="card-subtitle" id="password-email-display">user@example.com</p>
+                </div>
+
+                <form id="password-form" novalidate>
+                    <div class="form-group">
+                        <label for="password-input" class="form-label">Password</label>
+                        <div class="password-toggle">
+                            <input 
+                                type="password" 
+                                id="password-input" 
+                                class="form-input" 
+                                placeholder="Enter your password"
+                            >
+                            <button type="button" class="password-toggle-btn" id="toggle-password">
+                                👁️
+                            </button>
+                        </div>
+                        <div class="error-message" id="password-error"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="signin-btn" disabled>Sign In</button>
+                </form>
+
+                <button class="btn" id="change-email-password-btn">Change email</button>
+                <button class="link" id="forgot-password-btn">Forgot password?</button>
+            </div>
+
+            <!-- Screen 4: Connecting to Provider (SSO Loading) -->
+            <div id="screen-4" class="screen">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect">
+                    </div>
+                </div>
+
+                <div class="loading-spinner"></div>
+                <p class="loading-text" id="connecting-text">Connecting to provider...</p>
+            </div>
+
+            <!-- Screen 5: Dashboard (Success) -->
+            <div id="screen-5" class="screen">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect">
+                    </div>
+                </div>
+
+                <div class="success-icon">✓</div>
+                <p class="success-message" id="success-email">Signed in as user@example.com</p>
+
+                <button class="btn btn-primary" style="margin-top: 24px;" id="go-to-dashboard">
+                    Go to Dashboard
+                </button>
+            </div>
+
+            <!-- Screen 6: Error - TenantMap Unavailable -->
+            <div id="screen-6" class="screen">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/f35eccef-e3fc-4f92-a6b1-294017405c98" alt="ConstructConnect">
+                    </div>
+                </div>
+
+                <div class="error-box">
+                    <div class="error-box-title">Connection Error</div>
+                    <div class="error-box-message">We couldn't connect to our authentication service. Please try again.</div>
+                </div>
+
+                <button class="btn btn-primary" id="retry-tenantmap">Try Again</button>
+                <button class="link" id="use-password-fallback" style="margin-top: 12px;">Use password instead</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock API Functions
+        const MockAPI = {
+            // Mock TenantMap Database
+            tenantMapData: {
+                'acme.com': {
+                    found: true,
+                    tenantId: 'tenant-acme-123',
+                    providerId: 'oidc.azure-ad',
+                    providerName: 'Microsoft Azure AD',
+                    organizationName: 'ACME Construction'
+                },
+                'cowboys.com': {
+                    found: true,
+                    tenantId: 'tenant-cowboys',
+                    providerId: 'saml.okta',
+                    providerName: 'Okta SAML',
+                    organizationName: 'Cowboys Contractors'
+                },
+                'multi-idp.com': {
+                    found: true,
+                    tenantId: 'tenant-multi',
+                    providers: [
+                        { id: 'google', name: 'Google', icon: '🔵' },
+                        { id: 'microsoft', name: 'Microsoft', icon: '🟦' }
+                    ],
+                    organizationName: 'Multi-IdP Corp'
+                }
+            },
+
+            async lookupTenantMap(domain) {
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 200));
+                
+                // Special test domain to trigger error flow
+                if (domain === 'tenantmap-error.com') {
+                    throw new Error('TenantMap service unavailable');
+                }
+
+                const result = this.tenantMapData[domain];
+                if (result) {
+                    return result;
+                } else {
+                    return { found: false };
+                }
+            },
+
+            async authenticatePassword(email, password) {
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Mock: any email + "password123" = success
+                if (password === 'password123') {
+                    return {
+                        success: true,
+                        token: 'mock-jwt-token-' + Date.now()
+                    };
+                } else {
+                    return {
+                        success: false,
+                        error: 'Invalid password. Try "password123"'
+                    };
+                }
+            },
+
+            async authenticateSSO(providerId, tenantId, email) {
+                // Simulate SSO redirect delay
+                await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
+                
+                // Special test email to trigger SSO failure
+                if (email.includes('@sso-failed.com')) {
+                    return {
+                        success: false,
+                        error: 'SSO authentication failed or cancelled'
+                    };
+                }
+                
+                // All other SSO attempts succeed
+                return {
+                    success: true,
+                    token: 'mock-sso-token-' + Date.now()
+                };
+            }
+        };
+
+        // State Management
+        const AppState = {
+            email: '',
+            domain: '',
+            tenantId: '',
+            organizationName: '',
+            providerId: '',
+            providerName: ''
+        };
+
+        // Screen Management
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Extract domain from email
+        function getDomainFromEmail(email) {
+            return email.split('@')[1];
+        }
+
+        // Screen 1: Email Form Submit
+        document.getElementById('email-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const emailInput = document.getElementById('email-input');
+            const email = emailInput.value.trim();
+            const errorEl = document.getElementById('email-error');
+            
+            // Clear previous errors
+            errorEl.classList.remove('show');
+            emailInput.classList.remove('error');
+            
+            // Validate email
+            if (!email) {
+                errorEl.textContent = 'Email is required';
+                errorEl.classList.add('show');
+                emailInput.classList.add('error');
+                return;
+            }
+            
+            if (!email.includes('@')) {
+                errorEl.textContent = 'Please enter a valid email address';
+                errorEl.classList.add('show');
+                emailInput.classList.add('error');
+                return;
+            }
+
+            AppState.email = email;
+            AppState.domain = getDomainFromEmail(email);
+
+            try {
+                // Query TenantMap
+                const result = await MockAPI.lookupTenantMap(AppState.domain);
+
+                if (result.found) {
+                    AppState.tenantId = result.tenantId;
+                    AppState.organizationName = result.organizationName;
+
+                    // Check if multiple providers
+                    if (result.providers) {
+                        // Multiple providers - show selection screen
+                        document.getElementById('org-name-title').textContent = result.organizationName;
+                        document.getElementById('user-email-display').textContent = email;
+                        showScreen('screen-2');
+                    } else {
+                        // Single provider - auto-route to SSO
+                        AppState.providerId = result.providerId;
+                        AppState.providerName = result.providerName;
+                        document.getElementById('connecting-text').textContent = 
+                            `Connecting to ${result.providerName}...`;
+                        showScreen('screen-4');
+                        
+                        // Simulate SSO authentication
+                        try {
+                            const authResult = await MockAPI.authenticateSSO(
+                                result.providerId, 
+                                result.tenantId, 
+                                email
+                            );
+                            
+                            if (authResult.success) {
+                                document.getElementById('success-email').textContent = 
+                                    `Signed in as ${email}`;
+                                showScreen('screen-5');
+                            } else {
+                                alert('SSO authentication failed. Redirecting to password login.');
+                                document.getElementById('password-email-display').textContent = email;
+                                showScreen('screen-3');
+                            }
+                        } catch (error) {
+                            alert('SSO timeout. Redirecting to password login.');
+                            document.getElementById('password-email-display').textContent = email;
+                            showScreen('screen-3');
+                        }
+                    }
+                } else {
+                    // No TenantMap match - route to password
+                    document.getElementById('password-email-display').textContent = email;
+                    showScreen('screen-3');
+                }
+            } catch (error) {
+                // TenantMap service unavailable
+                showScreen('screen-6');
+            }
+        });
+
+        // Screen 2: Provider Selection
+        document.querySelectorAll('.provider-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const provider = e.currentTarget.dataset.provider;
+                
+                if (provider === 'password') {
+                    document.getElementById('password-email-display').textContent = AppState.email;
+                    showScreen('screen-3');
+                } else {
+                    // Route to SSO
+                    const providerName = provider === 'google' ? 'Google' : 'Microsoft';
+                    document.getElementById('connecting-text').textContent = 
+                        `Connecting to ${providerName}...`;
+                    showScreen('screen-4');
+                    
+                    try {
+                        const authResult = await MockAPI.authenticateSSO(
+                            provider, 
+                            AppState.tenantId, 
+                            AppState.email
+                        );
+                        
+                        if (authResult.success) {
+                            document.getElementById('success-email').textContent = 
+                                `Signed in as ${AppState.email}`;
+                            showScreen('screen-5');
+                        } else {
+                            alert('SSO authentication failed. Redirecting to password login.');
+                            document.getElementById('password-email-display').textContent = AppState.email;
+                            showScreen('screen-3');
+                        }
+                    } catch (error) {
+                        alert('SSO timeout. Redirecting to password login.');
+                        document.getElementById('password-email-display').textContent = AppState.email;
+                        showScreen('screen-3');
+                    }
+                }
+            });
+        });
+
+        document.getElementById('change-email-btn').addEventListener('click', () => {
+            showScreen('screen-1');
+        });
+
+        // Screen 3: Password Form Submit
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const passwordInput = document.getElementById('password-input');
+            const password = passwordInput.value;
+            const errorEl = document.getElementById('password-error');
+            
+            // Clear previous errors
+            errorEl.classList.remove('show');
+            passwordInput.classList.remove('error');
+            
+            if (!password) {
+                errorEl.textContent = 'Password is required';
+                errorEl.classList.add('show');
+                passwordInput.classList.add('error');
+                return;
+            }
+            
+            try {
+                const result = await MockAPI.authenticatePassword(AppState.email, password);
+                
+                if (result.success) {
+                    document.getElementById('success-email').textContent = 
+                        `Signed in as ${AppState.email}`;
+                    showScreen('screen-5');
+                } else {
+                    errorEl.textContent = result.error;
+                    errorEl.classList.add('show');
+                    passwordInput.classList.add('error');
+                }
+            } catch (error) {
+                errorEl.textContent = 'Authentication failed. Please try again.';
+                errorEl.classList.add('show');
+                passwordInput.classList.add('error');
+            }
+        });
+
+        // Password toggle
+        document.getElementById('toggle-password').addEventListener('click', () => {
+            const input = document.getElementById('password-input');
+            const btn = document.getElementById('toggle-password');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️';
+            }
+        });
+
+        document.getElementById('change-email-password-btn').addEventListener('click', () => {
+            showScreen('screen-1');
+        });
+
+        document.getElementById('forgot-password-btn').addEventListener('click', () => {
+            alert('Password reset flow not implemented in this prototype');
+        });
+
+        // Screen 5: Dashboard button
+        document.getElementById('go-to-dashboard').addEventListener('click', () => {
+            alert('Redirecting to dashboard... (prototype ends here)');
+        });
+
+        // Screen 6: Error handlers
+        document.getElementById('retry-tenantmap').addEventListener('click', () => {
+            showScreen('screen-1');
+        });
+
+        document.getElementById('use-password-fallback').addEventListener('click', () => {
+            document.getElementById('password-email-display').textContent = AppState.email;
+            showScreen('screen-3');
+        });
+
+        // Clear error on input
+        document.getElementById('email-input').addEventListener('input', (e) => {
+            document.getElementById('email-error').classList.remove('show');
+            document.getElementById('email-input').classList.remove('error');
+            
+            // Enable/disable continue button based on input
+            const continueBtn = document.getElementById('continue-btn');
+            continueBtn.disabled = !e.target.value.trim();
+        });
+
+        document.getElementById('password-input').addEventListener('input', (e) => {
+            document.getElementById('password-error').classList.remove('show');
+            document.getElementById('password-input').classList.remove('error');
+            
+            // Enable/disable sign in button based on input
+            const signinBtn = document.getElementById('signin-btn');
+            signinBtn.disabled = !e.target.value;
+        });
+    </script>
+</body>
+</html>

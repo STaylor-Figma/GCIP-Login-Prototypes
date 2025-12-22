@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCIP Login Flow Prototypes - ConstructConnect</title>
+    <title>Second Option - GCIP TenantMap SSO Flows</title>
     <style>
         * {
             margin: 0;
@@ -89,6 +89,21 @@
             color: var(--neutral-400);
         }
 
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-500);
+            text-decoration: none;
+            font-size: var(--font-size-300);
+            margin-bottom: var(--spacing-500);
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-600);
+        }
+
         .flow-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -142,6 +157,53 @@
             color: var(--neutral-400);
             font-size: var(--font-size-300);
         }
+
+        .test-info {
+            background: transparent;
+            border: none;
+            padding: var(--spacing-600) 0;
+            margin-bottom: var(--spacing-800);
+        }
+
+        .test-info h3 {
+            color: var(--primary-500);
+            font-size: var(--font-size-600);
+            font-weight: 600;
+            margin-bottom: var(--spacing-400);
+        }
+
+        .test-info p {
+            color: var(--neutral-500);
+            font-size: var(--font-size-300);
+            margin-bottom: var(--spacing-400);
+        }
+
+        .test-email-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .test-email-list li {
+            padding: var(--spacing-300);
+            margin-bottom: var(--spacing-300);
+            background: var(--neutral-100);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-300);
+        }
+
+        .test-email-list code {
+            background: var(--primary-100);
+            color: var(--primary-600);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-weight: 600;
+        }
+
+        .test-email-list .arrow {
+            color: var(--primary-400);
+            margin: 0 8px;
+        }
     </style>
 </head>
 <body>
@@ -154,23 +216,58 @@
 
     <!-- Main Content -->
     <div class="container">
+        <a href="index.html" class="back-link">
+            ← Back to Options
+        </a>
+
         <div class="header">
-            <h1>GCIP Login Flow Prototypes</h1>
-            <p>Select a workflow option to explore interactive prototypes</p>
+            <h1>Second Option - TenantMap SSO Flows</h1>
+            <p>GCIP authentication flows with TenantMap routing service and intelligent provider selection</p>
         </div>
 
         <div class="flow-grid">
-            <a href="first-option.html" class="flow-card">
-                <h2>First Option</h2>
-                <p>Complete collection of SSO login flow variants including Google, OpenID Connect, SAML, and error states.</p>
-                <span class="flow-badge">Multiple Flows</span>
-            </a>
-
-            <a href="second-option.html" class="flow-card">
-                <h2>Second Option</h2>
-                <p>TenantMap routing service with intelligent provider selection, automatic SSO routing, and password fallback.</p>
+            <a href="tenantmap-sso-flow.html" class="flow-card">
+                <h2>TenantMap SSO Flow</h2>
+                <p>Complete authentication flow with TenantMap database lookup, automatic provider routing, and fallback to password authentication.</p>
                 <span class="flow-badge">6 Screens</span>
             </a>
+        </div>
+
+        <div class="test-info">
+            <h3>Test Emails for Development</h3>
+            <p>Use these email addresses to test different routing scenarios:</p>
+            <ul class="test-email-list">
+                <li>
+                    <code>user@acme.com</code>
+                    <span class="arrow">→</span>
+                    Single provider (Azure AD) - Auto-routes to SSO loading screen → Success
+                </li>
+                <li>
+                    <code>user@cowboys.com</code>
+                    <span class="arrow">→</span>
+                    Single provider (Okta SAML) - Auto-routes to SSO loading screen → Success
+                </li>
+                <li>
+                    <code>user@multi-idp.com</code>
+                    <span class="arrow">→</span>
+                    Multiple providers - Shows provider selection screen (Google + Microsoft) → Success
+                </li>
+                <li>
+                    <code>user@example.com</code>
+                    <span class="arrow">→</span>
+                    No TenantMap match - Routes to password entry (use "password123")
+                </li>
+                <li>
+                    <code>user@tenantmap-error.com</code>
+                    <span class="arrow">→</span>
+                    TenantMap service error - Shows error screen with retry options
+                </li>
+                <li>
+                    <code>user@sso-failed.com</code>
+                    <span class="arrow">→</span>
+                    SSO authentication failure - Shows alert then redirects to password entry
+                </li>
+            </ul>
         </div>
 
         <div class="footer">
